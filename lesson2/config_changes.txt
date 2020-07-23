@@ -1,0 +1,12 @@
+vlan 101
+name new_vlan_101
+vlan 102
+name new_vlan_102
+vlan 103
+name new_vlan_103
+vlan 104
+name new_vlan_104
+vlan 105
+name new_vlan_105
+vlan 106
+name new_vlan_106
