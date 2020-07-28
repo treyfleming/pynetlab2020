@@ -1,0 +1,16 @@
+- dev_name: cisco3
+  hostname: cisco3.lasthop.io
+  password: cisco1234
+  username: admin
+- dev_name: cisco4
+  hostname: cisco4.lasthop.io
+  password: cisco1234
+  username: admin
+- dev_name: arista1
+  hostname: arista1.lasthop.io
+  password: cisco1234
+  username: admin
+- dev_name: arista2
+  hostname: arista2.lasthop.io
+  password: cisco1234
+  username: admin
