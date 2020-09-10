@@ -1,0 +1,21 @@
+
+{%- for vrf in suck_balls %}
+vrf definition {{ vrf.vrf_name }}
+ rd {{ vrf.vrf_rd }}
+
+{%- if vrf.ipv4_enabled == True %}
+ address-family ipv4
+  route-target export {{ vrf.vrf_rd }}
+  route-target import {{ vrf.vrf_rd }}
+ exit-address-family
+{%- endif %}
+ !
+{%- if vrf.ipv6_enabled == True %}
+ address-family ipv6
+  route-target export {{ vrf.vrf_rd }}
+  route-target import {{ vrf.vrf_rd }}
+ exit-address-family
+{%- endif %}
+!
+!
+{%- endfor %}
