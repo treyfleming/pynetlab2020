@@ -58,11 +58,52 @@ if __name__ == "__main__":
         print(cfg)
         cfg_lines = [cfg.strip() for cfg in cfg.splitlines()]
        
-    ##Do some Netmiko stuff
-    net_connect = ConnectHandler(**tmp_device)
-    #Store the SSH connection for later so there's no need to reconnect
-    device["ssh_conn"] = net_connect
-    print(f">>> Configuring {hostname}")
-    output = net_connect.send_config_set(cfg_lines)
-    print(output)
+        ##Do some Netmiko stuff
+        net_connect = ConnectHandler(**tmp_device)
+        #Store the SSH connection for later so there's no need to reconnect
+        device["ssh_conn"] = net_connect
+        print(f">>> Configuring {hostname}")
+        output = net_connect.send_config_set(cfg_lines)
+        print(output)
+        print("\n\n")
+    
+    #Pause to give BGP time to come alive
+    sleep_time = 15
+    print(f"Sleeping for {sleep_time} seconds...")
+    time.sleep(sleep_time)
+
     print("\n\n")
+    print(">>> Testing ping and BGP")
+    
+    ### Test Ping and BGP
+    for device in (nxos1, nxos2):
+        net_connect = device["ssh_conn"]
+        remote_ip = device["j2_vars"]["bgp_neighbor"]
+        
+        #Test ping
+        output = net_connect.send_command(f"ping {remote_ip}")
+        print(output)
+        if "64 bytes from" not in output:
+            print("\n Ping failed!!!")
+        print("\n\n")
+
+        #Test BGP
+        bgp_verify = f"show ip bgp summary | include {remote_ip}"
+        output = net_connect.send_command(bgp_verify)
+        # Retrieve the State/PfxRdd field which is the last field
+        match = re.search(r"\s+(\S+)\s*$", output)
+        prefix_received = match.group(1)
+        try:
+            # if this is an integer, bgp is up and you're receiving prefixes
+            int(prefix_received)
+            print(
+                f"BGP reached the established state. Prefixes received {prefix_received}")
+
+        except ValueError:
+                print("BGP failed to reach the established state")
+    # Kill connection
+    for device in (nxos1, nxos2):
+        net_connect = device["ssh_conn"]
+        net_connect.disconnect()
+    print("\n\n")
+
