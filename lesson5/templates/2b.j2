@@ -1,0 +1,9 @@
+### {{ hostname }} ###
+
+interface {{ interface }}
+  ip address {{ ipv4_address }}/{{ ipv4_netmask }}
+
+router bgp {{ bgp_as }}
+  neighbor {{ bgp_neighbor }} remote-as {{ bgp_as }}
+    address-family ipv4 unicast
+
